@@ -30,4 +30,17 @@
 -->
 <layout version="0.1.0">
     
+    <checkout_onepage_index>
+        
+        <remove name="left" />
+        <remove name="right" />
+
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        
+        <reference name="checkout.onepage">
+            <action method="setTemplate"><template>zkilleman_checkout/onepage.phtml</template></action>
+        </reference>
+    </checkout_onepage_index>
 </layout>
