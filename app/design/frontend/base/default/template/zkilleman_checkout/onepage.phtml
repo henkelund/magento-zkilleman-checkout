@@ -38,12 +38,12 @@
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/opcheckout.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/zkilleman_checkout.js') ?>"></script>
 <div class="opc" id="checkoutSteps">
-<?php $i = 0; foreach ($_containers as $container => $steps): ?>
+<?php foreach ($_containers as $container => $steps): ?>
     <ul class="step-container container-<?php echo $container; ?>">
-    <?php foreach ($steps as $_stepId => $_stepInfo): ++$i; ?>
+    <?php foreach ($steps as $_stepId => $_stepInfo): ?>
         <li id="opc-<?php echo $_stepId ?>" class="section<?php echo !empty($_stepInfo['allow'])?' allow':'' ?><?php echo !empty($_stepInfo['complete'])?' saved':'' ?>">
             <div class="step-title">
-                <span class="number"><?php echo $i ?></span>
+                <span class="number"><?php echo $_stepInfo['counter'] ?></span>
                 <h2><?php echo $_stepInfo['label'] ?></h2>
                 <a href="#"><?php echo $this->__('Edit') ?></a>
             </div>
@@ -59,12 +59,19 @@
 //<![CDATA[
 
     function checkoutStepToggle(step, open) {
+        var effect = open ? Effect.BlindDown : Effect.BlindUp;
+        var effectOptions = {duration: 0.2};
         if (step == 'opc-login') {
             var contents = Element.select(step, '.a-item');
-            var effect = open ? Effect.BlindDown : Effect.BlindUp;
-            effect(contents[0], {duration: 0.2});
+            effect(contents[0], effectOptions);
+        } else if (step == 'opc-shipping') {
+            if (open || $('shipping:same_as_billing').checked) {
+                effect('opc-shipping', effectOptions);
+            }
         }
     }
+
+    Element.hide('opc-shipping');
 
     var accordion = new Zkilleman_Accordion(
                             'checkoutSteps', '.step-title', true, {

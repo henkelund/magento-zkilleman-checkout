@@ -61,15 +61,21 @@
         margin: 0 8px;
     }
 
-.step-container .form-list .field,
+.step-container .form-list .field {
+    width: 50%;
+}
 .step-container .form-list .input-box,
-.step-container .form-list li.wide .input-box,
-.step-container .form-list .input-box select {
+.step-container .form-list li.wide .input-box {
     width: 100%;
     }
-    .step-container .form-list .input-box input.input-text,
-    .step-container .form-list li.wide .input-box input.input-text {
+    .step-container .form-list .input-box select {
         width: 98%;
+    }
+    .step-container .form-list .input-box input.input-text {
+        width: 94%;
+    }
+    .step-container .form-list li.wide .input-box input.input-text {
+        width: 97%;
     }
 
 #opc-login .step-title {

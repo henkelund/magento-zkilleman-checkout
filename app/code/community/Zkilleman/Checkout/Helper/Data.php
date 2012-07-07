@@ -51,6 +51,9 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
             $containers[$code] = array();
         }
 
+        $i = 0;
+        $shippingContainer = null;
+        $billingContainer  = null;
         foreach ($steps as $stepCode => $stepInfo) {
             $containerCode = $config->getStepContainerCode($stepCode);
             if (isset($containers[$containerCode])) {
@@ -58,13 +61,27 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                                 ($block->getChild($stepCode) &&
                                     $block->getChild($stepCode)->isShow());
                 if ($visible) {
+                    $stepInfo['counter'] = ++$i;
                     $containers[$containerCode][$stepCode] = $stepInfo;
+                    if ($stepCode == 'shipping') {
+                        $shippingContainer = $containerCode;
+                        --$i;
+                    }
+                    if ($stepCode == 'billing') {
+                        $billingContainer = $containerCode;
+                    }
                 }
             } else {
                 throw new Exception(sprintf(
                         'No container "%s" exists for step "%s"',
                         $containerCode, $stepCode));
             }
+        }
+        
+        if ($shippingContainer && $billingContainer) {
+            $counter  = $containers[$billingContainer]['billing']['counter'];
+            $counter .= 'b';
+            $containers[$shippingContainer]['shipping']['counter'] = $counter;
         }
 
         return $containers;
