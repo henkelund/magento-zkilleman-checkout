@@ -32,7 +32,13 @@
 
 .step-container .section {
     margin-bottom: 8px;
-}
+    }
+    .step-container .section .buttons-set {
+        display: none;
+    }
+    .step-container .section.active .buttons-set {
+        display: block;
+    }
 
 .step-container .step {
     padding: 8px;
@@ -65,3 +71,7 @@
     .step-container .form-list li.wide .input-box input.input-text {
         width: 98%;
     }
+
+#opc-login .step-title {
+    border-bottom: 1px solid #A3AEB3;
+}

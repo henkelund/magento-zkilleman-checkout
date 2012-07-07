@@ -47,7 +47,7 @@
                 <h2><?php echo $_stepInfo['label'] ?></h2>
                 <a href="#"><?php echo $this->__('Edit') ?></a>
             </div>
-            <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item" style="display:none;">
+            <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item">
                 <?php echo $this->getChildHtml($_stepId) ?>
             </div>
         </li>
@@ -57,7 +57,19 @@
 </div>
 <script type="text/javascript">
 //<![CDATA[
-    var accordion = new Accordion('checkoutSteps', '.step-title', true);
+
+    function checkoutStepToggle(step, open) {
+        if (step == 'opc-login') {
+            var contents = Element.select(step, '.a-item');
+            var effect = open ? Effect.BlindDown : Effect.BlindUp;
+            effect(contents[0], {duration: 0.2});
+        }
+    }
+
+    var accordion = new Zkilleman_Accordion(
+                            'checkoutSteps', '.step-title', true, {
+                                onToggle: checkoutStepToggle
+                            });
     <?php if($this->getActiveStep()): ?>
     accordion.openSection('opc-<?php echo $this->getActiveStep() ?>');
     <?php endif ?>

@@ -28,6 +28,59 @@
 
 (function(w) {
     
-    // TODO: Override some Checkout.prototype functions
+    if (!w.Zkilleman_Accordion) {
+        w.Zkilleman_Accordion = Class.create(Accordion, {
+            
+            initialize: function(elem, clickableEntity, checkAllow, callbacks) {
+                this.container = $(elem);
+                this.checkAllow = checkAllow || false;
+                this.disallowAccessToNextSections = false;
+                this.sections = $$('#' + elem + ' .section');
+                this.currentSection = false;
+                var headers = $$('#' + elem + ' .section ' + clickableEntity);
+                headers.each(function(header) {
+                    Event.observe(header,'click',this.sectionClicked.bindAsEventListener(this));
+                }.bind(this));
+                this.callbacks = callbacks || {};
+            },
+
+            openSection: function(section) {
+                var section = $(section);
+
+                // Check allow
+                if (this.checkAllow && !Element.hasClassName(section, 'allow')){
+                    return;
+                }
+
+                if(section.id != this.currentSection) {
+                    this.closeExistingSection();
+                    this.currentSection = section.id;
+                    $(this.currentSection).addClassName('active');
+                    if (typeof this.callbacks.onToggle == 'function') {
+                        this.callbacks.onToggle(section.id, true);
+                    }
+
+                    if (this.disallowAccessToNextSections) {
+                        var pastCurrentSection = false;
+                        for (var i=0; i<this.sections.length; i++) {
+                            if (pastCurrentSection) {
+                                Element.removeClassName(this.sections[i], 'allow')
+                            }
+                            if (this.sections[i].id==section.id) {
+                                pastCurrentSection = true;
+                            }
+                        }
+                    }
+                }
+            },
+
+            closeSection: function(section) {
+                $(section).removeClassName('active');
+                if (typeof this.callbacks.onToggle == 'function') {
+                    this.callbacks.onToggle(section, false);
+                }
+            }
+        });
+    }
 
 })(window);
