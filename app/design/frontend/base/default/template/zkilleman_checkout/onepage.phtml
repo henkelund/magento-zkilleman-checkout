@@ -37,6 +37,19 @@
 <script type="text/javascript" src="<?php echo $this->getJsUrl('varien/accordion.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/opcheckout.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/zkilleman_checkout.js') ?>"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+    function resizeStepOverlay(step)
+    {
+        var content = Element.select(step, '.a-item')[0];
+        var height = Element.getHeight(content);
+        var overlay = Element.select(content, '.overlay')[0];
+        Element.setStyle(overlay, {height: height + 'px'});
+    }
+
+//]]>
+</script>
 <div class="opc" id="checkoutSteps">
 <?php foreach ($_containers as $container => $steps): ?>
     <ul class="step-container container-<?php echo $container; ?>">
@@ -49,7 +62,13 @@
             </div>
             <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item">
                 <?php echo $this->getChildHtml($_stepId) ?>
+                <div class="overlay"></div>
             </div>
+            <script type="text/javascript">
+            //<![CDATA[
+                resizeStepOverlay('opc-<?php echo $_stepId; ?>');
+            //]]>
+            </script>
         </li>
     <?php endforeach; ?>
     </ul>
@@ -64,10 +83,12 @@
         if (step == 'opc-login') {
             var contents = Element.select(step, '.a-item');
             effect(contents[0], effectOptions);
-        } else if (step == 'opc-shipping') {
-            if (open || $('shipping:same_as_billing').checked) {
-                effect('opc-shipping', effectOptions);
-            }
+        } else if (step == 'opc-shipping' &&
+                    (open || $('shipping:same_as_billing').checked)) {
+            
+            effect('opc-shipping', effectOptions);
+        } else if (!open) {
+            resizeStepOverlay(step);
         }
     }
 

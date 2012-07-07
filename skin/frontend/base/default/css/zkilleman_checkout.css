@@ -41,8 +41,22 @@
     }
 
 .step-container .step {
+    position: relative;
     padding: 8px;
-}
+    }
+    .step-container .step .overlay {
+        position: absolute;
+        top: 0;
+        left: -1px;
+        padding: 0 2px;
+        width: 100%;
+        background-color: white;
+        opacity: 0.25;
+        z-index: 999;
+    }
+    .step-container .active .step .overlay {
+        display: none;
+    }
 
 .step-container.container-left,
 .step-container.container-middle,
