@@ -83,4 +83,10 @@
         });
     }
 
+    if (w.Checkout && w.Checkout.prototype) {
+        w.Checkout.prototype.reloadProgressBlock = function(toStep) {
+            // ignore progress request
+        };
+    }
+
 })(window);
