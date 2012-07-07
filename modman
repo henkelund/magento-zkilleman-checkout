@@ -1,2 +1,3 @@
-app/etc/modules/Zkilleman_Checkout.xml app/etc/modules/Zkilleman_Checkout.xml
-app/code/community/Zkilleman/Checkout  app/code/community/Zkilleman/Checkout
+app/etc/modules/Zkilleman_Checkout.xml                         app/etc/modules/Zkilleman_Checkout.xml
+app/code/community/Zkilleman/Checkout                          app/code/community/Zkilleman/Checkout
+app/design/frontend/base/default/layout/zkilleman_checkout.xml app/design/frontend/base/default/layout/zkilleman_checkout.xml

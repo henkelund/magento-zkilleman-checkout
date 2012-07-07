@@ -46,6 +46,25 @@
             </zkilleman_checkout>
         </helpers>
     </global>
+    <frontend>
+        <layout>
+            <updates>
+                <zkilleman_checkout>
+                    <file>zkilleman_checkout.xml</file>
+                </zkilleman_checkout>
+            </updates>
+        </layout>
+        <events>
+            <core_layout_update_updates_get_after>
+                <observers>
+                    <zkilleman_checkout_layout_updates>
+                        <class>zkilleman_checkout/observer</class>
+                        <method>afterGetLayoutUpdates</method>
+                    </zkilleman_checkout_layout_updates>
+                </observers>
+            </core_layout_update_updates_get_after>
+        </events>
+    </frontend>
     <default>
         <zkilleman_checkout>
             <general>
