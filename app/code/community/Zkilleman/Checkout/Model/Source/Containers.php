@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Zkilleman_Checkout
  *
@@ -27,24 +26,21 @@
  * @license   http://www.gnu.org/licenses/lgpl.html GNU LGPL
  * @link      https://github.com/henkelund/magento-zkilleman-checkout
  */
--->
-<layout version="0.1.0">
-    
-    <checkout_onepage_index>
-        
-        <remove name="left" />
-        <remove name="right" />
 
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
-        </reference>
-        
-        <reference name="head">
-            <action method="addCss"><stylesheet>css/zkilleman_checkout.css</stylesheet></action>
-        </reference>
-        
-        <reference name="checkout.onepage">
-            <action method="setTemplate"><template>zkilleman_checkout/onepage.phtml</template></action>
-        </reference>
-    </checkout_onepage_index>
-</layout>
+class Zkilleman_Checkout_Model_Source_Containers
+{
+    const EVENT_NAME = 'zkilleman_checkout_containers_additional';
+    
+    /**
+     * Get available checkout step layout containers
+     *
+     * @return array 
+     */
+    public function toOptionArray()
+    {
+        $options = array('top', 'left', 'middle', 'right');
+        $container = new Varien_Object(array('options' => $options));
+        Mage::dispatchEvent(self::EVENT_NAME, array('container' => $container));
+        return $container->getOptions();
+    }
+}

@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * Zkilleman_Checkout
  *
@@ -27,24 +25,43 @@
  * @license   http://www.gnu.org/licenses/lgpl.html GNU LGPL
  * @link      https://github.com/henkelund/magento-zkilleman-checkout
  */
--->
-<layout version="0.1.0">
-    
-    <checkout_onepage_index>
-        
-        <remove name="left" />
-        <remove name="right" />
 
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
-        </reference>
-        
-        <reference name="head">
-            <action method="addCss"><stylesheet>css/zkilleman_checkout.css</stylesheet></action>
-        </reference>
-        
-        <reference name="checkout.onepage">
-            <action method="setTemplate"><template>zkilleman_checkout/onepage.phtml</template></action>
-        </reference>
-    </checkout_onepage_index>
-</layout>
+.step-container .step-title {
+    border-top-width: 1px;
+}
+
+.step-container .section {
+    margin-bottom: 8px;
+}
+
+.step-container .step {
+    padding: 8px;
+}
+
+.step-container.container-left,
+.step-container.container-middle,
+.step-container.container-right {
+    width: 33%;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+.step-container.container-middle {
+    width: 34%;
+    }
+    .step-container.container-middle .step-title,
+    .step-container.container-middle .step {
+        margin: 0 8px;
+    }
+
+.step-container .form-list .field,
+.step-container .form-list .input-box,
+.step-container .form-list li.wide .input-box,
+.step-container .form-list .input-box select {
+    width: 100%;
+    }
+    .step-container .form-list .input-box input.input-text,
+    .step-container .form-list li.wide .input-box input.input-text {
+        width: 98%;
+    }

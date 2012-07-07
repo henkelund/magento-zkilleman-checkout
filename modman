@@ -2,3 +2,5 @@ app/etc/modules/Zkilleman_Checkout.xml                         app/etc/modules/Z
 app/code/community/Zkilleman/Checkout                          app/code/community/Zkilleman/Checkout
 app/design/frontend/base/default/layout/zkilleman_checkout.xml app/design/frontend/base/default/layout/zkilleman_checkout.xml
 app/design/frontend/base/default/template/zkilleman_checkout   app/design/frontend/base/default/template/zkilleman_checkout
+skin/frontend/base/default/css/zkilleman_checkout.css          skin/frontend/base/default/css/zkilleman_checkout.css
+skin/frontend/base/default/js/zkilleman_checkout.js            skin/frontend/base/default/js/zkilleman_checkout.js

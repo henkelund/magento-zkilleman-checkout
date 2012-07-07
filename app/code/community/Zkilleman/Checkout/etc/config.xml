@@ -70,6 +70,14 @@
             <general>
                 <enabled>0</enabled>
             </general>
+            <layout>
+                <login>top</login>
+                <billing>left</billing>
+                <shipping>left</shipping>
+                <shipping_method>middle</shipping_method>
+                <payment>middle</payment>
+                <review>right</review>
+            </layout>
         </zkilleman_checkout>
     </default>
 </config>

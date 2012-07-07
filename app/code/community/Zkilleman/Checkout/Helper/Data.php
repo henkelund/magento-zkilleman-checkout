@@ -29,5 +29,44 @@
 
 class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    
+    /**
+     * Build step layout
+     *
+     * @param  array $steps
+     * @param  Mage_Core_Block_Abstract $block
+     * @return array
+     * @throws Exception
+     */
+    public function containSteps(
+                                    array                    $steps,
+                                    Mage_Core_Block_Abstract $block = null)
+    {
+        $containers     = array();
+        $config         = Mage::getSingleton('zkilleman_checkout/config');
+        $containerCodes =
+            Mage::getSingleton('zkilleman_checkout/source_containers')
+                        ->toOptionArray();
+
+        foreach ($containerCodes as $code) {
+            $containers[$code] = array();
+        }
+
+        foreach ($steps as $stepCode => $stepInfo) {
+            $containerCode = $config->getStepContainerCode($stepCode);
+            if (isset($containers[$containerCode])) {
+                $visible = ($block == null) ? true :
+                                ($block->getChild($stepCode) &&
+                                    $block->getChild($stepCode)->isShow());
+                if ($visible) {
+                    $containers[$containerCode][$stepCode] = $stepInfo;
+                }
+            } else {
+                throw new Exception(sprintf(
+                        'No container "%s" exists for step "%s"',
+                        $containerCode, $stepCode));
+            }
+        }
+
+        return $containers;
+    }
 }

@@ -30,6 +30,10 @@
 class Zkilleman_Checkout_Model_Config
 {
     const XML_PATH_CHECKOUT_ENABLED = 'zkilleman_checkout/general/enabled';
+    const XML_PATH_CHECKOUT_LAYOUT  = 'zkilleman_checkout/layout/%s';
+    
+    // Fallback if no code found in config
+    const DEFAULT_CONTAINER_CODE    = 'right';
 
     /**
      * Is Zkilleman_Checkout enabled?
@@ -39,5 +43,24 @@ class Zkilleman_Checkout_Model_Config
     public function isEnabled()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ENABLED);
+    }
+    
+    /**
+     * Return the intended layout position for the given checkout step
+     *
+     * @param  string $stepCode
+     * @return string 
+     */
+    public function getStepContainerCode($stepCode)
+    {
+        if (!is_scalar($stepCode)) {
+            return self::DEFAULT_CONTAINER_CODE;
+        }
+        $path = sprintf(self::XML_PATH_CHECKOUT_LAYOUT, $stepCode);
+        $container = Mage::getStoreConfig($path);
+        if (!strlen($container) > 0) {
+            $container = self::DEFAULT_CONTAINER_CODE;
+        }
+        return $container;
     }
 }
