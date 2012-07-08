@@ -28,8 +28,9 @@
  */
 ?>
 <?php
-    $_helper     = Mage::helper('zkilleman_checkout');
-    $_containers = $_helper->containSteps($this->getSteps(), $this);
+    $_helper         = Mage::helper('zkilleman_checkout');
+    $_containers     = $_helper->containSteps($this->getSteps(), $this);
+    $_containersHtml = array();
 ?>
 <div class="page-title">
     <h1><?php echo $this->__('Checkout') ?></h1>
@@ -50,29 +51,39 @@
 
 //]]>
 </script>
-<div class="opc" id="checkoutSteps">
-<?php foreach ($_containers as $container => $steps): ?>
-    <ul class="step-container container-<?php echo $container; ?>">
+<?php foreach ($_containers as $container => $steps): if (!empty($steps)): ob_start(); ?>
+<ul class="step-container container-<?php echo $container; ?>">
     <?php foreach ($steps as $_stepId => $_stepInfo): ?>
-        <li id="opc-<?php echo $_stepId ?>" class="section<?php echo !empty($_stepInfo['allow'])?' allow':'' ?><?php echo !empty($_stepInfo['complete'])?' saved':'' ?>">
-            <div class="step-title">
-                <span class="number"><?php echo $_stepInfo['counter'] ?></span>
-                <h2><?php echo $_stepInfo['label'] ?></h2>
-                <a href="#"><?php echo $this->__('Edit') ?></a>
-            </div>
-            <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item">
-                <?php echo $this->getChildHtml($_stepId) ?>
-                <div class="overlay"></div>
-            </div>
-            <script type="text/javascript">
-            //<![CDATA[
-                resizeStepOverlay('opc-<?php echo $_stepId; ?>');
-            //]]>
-            </script>
-        </li>
+    <li id="opc-<?php echo $_stepId ?>" class="section<?php echo !empty($_stepInfo['allow'])?' allow':'' ?><?php echo !empty($_stepInfo['complete'])?' saved':'' ?>">
+        <div class="step-title">
+            <span class="number"><?php echo $_stepInfo['counter'] ?></span>
+            <h2><?php echo $_stepInfo['label'] ?></h2>
+            <a href="#"><?php echo $this->__('Edit') ?></a>
+        </div>
+        <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item">
+            <?php echo $this->getChildHtml($_stepId) ?>
+            <div class="overlay"></div>
+        </div>
+        <script type="text/javascript">
+        //<![CDATA[
+            resizeStepOverlay('opc-<?php echo $_stepId; ?>');
+        //]]>
+        </script>
+    </li>
     <?php endforeach; ?>
-    </ul>
-<?php endforeach; ?>
+</ul>
+<?php $_containersHtml[$container] = ob_get_clean(); endif; endforeach; ?>
+<div class="opc" id="checkoutSteps">
+    <?php /* Render top, left, middle & right containers if they're not empty */ ?>
+    <?php /* Copy this template to your theme if you need to wrap the steps in additional html */ ?>
+    <?php if (isset($_containersHtml['top']))    { echo $_containersHtml['top'];    unset($_containersHtml['top']);    } ?>
+    <?php if (isset($_containersHtml['left']))   { echo $_containersHtml['left'];   unset($_containersHtml['left']);   } ?>
+    <?php if (isset($_containersHtml['middle'])) { echo $_containersHtml['middle']; unset($_containersHtml['middle']); } ?>
+    <?php if (isset($_containersHtml['right']))  { echo $_containersHtml['right'];  unset($_containersHtml['right']);  } ?>
+    <?php /* Flush the html array in case there are additional containers */ ?>
+    <?php foreach (array_keys($_containersHtml) as $container): ?>
+        <?php echo $_containersHtml[$container]; ?>
+    <?php unset($_containersHtml[$container]); endforeach; ?>
 </div>
 <script type="text/javascript">
 //<![CDATA[
