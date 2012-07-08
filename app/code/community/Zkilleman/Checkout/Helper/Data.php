@@ -47,7 +47,7 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::getSingleton('zkilleman_checkout/source_containers')
                         ->toOptionArray();
 
-        foreach ($containerCodes as $code) {
+        foreach (array_keys($containerCodes) as $code) {
             $containers[$code] = array();
         }
 

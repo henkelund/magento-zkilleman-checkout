@@ -38,9 +38,15 @@ class Zkilleman_Checkout_Model_Source_Containers
      */
     public function toOptionArray()
     {
-        $options = array('top', 'left', 'middle', 'right');
-        $container = new Varien_Object(array('options' => $options));
-        Mage::dispatchEvent(self::EVENT_NAME, array('container' => $container));
-        return $container->getOptions();
+        $helper = Mage::helper('zkilleman_checkout');
+        $containers = new Varien_Object(array(
+            'top'    => $helper->__('Top'),
+            'left'   => $helper->__('Left'),
+            'middle' => $helper->__('Middle'),
+            'right'  => $helper->__('Right')
+        ));
+        Mage::dispatchEvent(
+                    self::EVENT_NAME, array('containers' => $containers));
+        return (array) $containers->getData();
     }
 }
