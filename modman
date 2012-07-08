@@ -4,3 +4,4 @@ app/design/frontend/base/default/layout/zkilleman_checkout.xml app/design/fronte
 app/design/frontend/base/default/template/zkilleman_checkout   app/design/frontend/base/default/template/zkilleman_checkout
 skin/frontend/base/default/css/zkilleman_checkout.css          skin/frontend/base/default/css/zkilleman_checkout.css
 skin/frontend/base/default/js/zkilleman_checkout.js            skin/frontend/base/default/js/zkilleman_checkout.js
+skin/frontend/base/default/images/zkilleman_checkout           skin/frontend/base/default/images/zkilleman_checkout
