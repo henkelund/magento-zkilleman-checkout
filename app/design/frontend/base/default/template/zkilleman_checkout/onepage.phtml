@@ -43,10 +43,13 @@
 
     function resizeStepOverlay(step)
     {
-        var content = Element.select(step, '.a-item')[0];
-        var height = Element.getHeight(content);
-        var overlay = Element.select(content, '.overlay')[0];
-        Element.setStyle(overlay, {height: height + 'px'});
+        var height = 0;
+        if (!Element.hasClassName(step, 'active')) {
+            var content = Element.select(step, '.a-item');
+            height = Element.getHeight(content[0]);
+        }
+        var overlay = Element.select(step, '.a-item .overlay');
+        Element.setStyle(overlay[0], {'height': height + 'px'});
     }
 
 //]]>
@@ -89,18 +92,28 @@
 //<![CDATA[
 
     function checkoutStepToggle(step, open) {
-        var effect = open ? Effect.BlindDown : Effect.BlindUp;
-        var effectOptions = {duration: 0.2};
-        if (step == 'opc-login') {
-            var contents = Element.select(step, '.a-item');
-            effect(contents[0], effectOptions);
-        } else if (step == 'opc-shipping' &&
-                    (open || $('shipping:same_as_billing').checked)) {
-            
-            effect('opc-shipping', effectOptions);
-        } else if (!open) {
-            resizeStepOverlay(step);
+        var action = open ? Element.show : Element.hide;
+        switch (step) {
+            case 'opc-login':
+                var contents = Element.select(step, '.a-item');
+                action(contents[0]);
+                break;
+            case 'opc-billing':
+                if (!open && $('billing:use_for_shipping_yes').checked) {
+                    action('opc-shipping');
+                }
+                break;
+            case 'opc-shipping':
+                var sameAsBilling = $('shipping:same_as_billing').checked;
+                if (open || sameAsBilling) {
+                    action(step);
+                }
+                $('billing:use_for_shipping_yes').checked =  sameAsBilling;
+                $('billing:use_for_shipping_no').checked  = !sameAsBilling;
+                break;
         }
+        
+        resizeStepOverlay(step);
     }
 
     Element.hide('opc-shipping');
@@ -111,6 +124,7 @@
                             });
     <?php if($this->getActiveStep()): ?>
     accordion.openSection('opc-<?php echo $this->getActiveStep() ?>');
+    resizeStepOverlay('opc-<?php echo $this->getActiveStep() ?>');
     <?php endif ?>
     var checkout = new Checkout(accordion, {
         review:     '<?php echo $this->getUrl('checkout/onepage/review') ?>',
