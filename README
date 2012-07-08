@@ -1,6 +1,4 @@
 Known issues:
   * Column float problems w/ IE6
-  * Effect.BlindUp/Down breaks layout in IE7
-  * Inconsistent "same_as_billing" behavior
   * No shipping methods before address save (might be beyond the scope of this module)
   * Empty review step before payment save (might also be outside the scope)
