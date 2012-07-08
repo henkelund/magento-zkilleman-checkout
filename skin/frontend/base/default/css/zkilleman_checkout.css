@@ -28,7 +28,13 @@
 
 .step-container .step-title {
     border-top-width: 1px;
-}
+    }
+    .step-container .allow .step-title a {
+        display: block;
+    }
+    .step-container .active .step-title a {
+        display: none;
+    }
 
 .step-container .section {
     margin-bottom: 8px;
@@ -39,6 +45,9 @@
     .step-container .section.active .buttons-set {
         display: block;
     }
+    .step-container .section .buttons-set .back-link {
+        display: none;
+    }
 
 .step-container .step {
     position: relative;
@@ -48,7 +57,7 @@
         position: absolute;
         top: 0;
         left: -1px;
-        padding: 0 2px;
+        padding: 0 1px;
         width: 100%;
         background-color: white;
         opacity: 0.25;
