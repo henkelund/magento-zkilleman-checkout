@@ -43,6 +43,8 @@
 
     function resizeStepOverlay(step)
     {
+        if (!$(step)) { return; }
+        
         var height = 0;
         if (!Element.hasClassName(step, 'active')) {
             var content = Element.select(step, '.a-item');
@@ -91,32 +93,45 @@
 <script type="text/javascript">
 //<![CDATA[
 
-    function checkoutStepToggle(step, open) {
+    function checkoutStepToggle(step, open)
+    {
+        if (!$(step)) { return; }
+        
         var action = open ? Element.show : Element.hide;
         switch (step) {
             case 'opc-login':
-                var contents = Element.select(step, '.a-item');
-                action(contents[0]);
+                Element.select(step, '.a-item').each(function(el) {
+                    action(el);
+                });
                 break;
             case 'opc-billing':
-                if (!open && $('billing:use_for_shipping_yes').checked) {
-                    action('opc-shipping');
+                var useForShipping = $('billing:use_for_shipping_yes');
+                useForShipping = useForShipping ? useForShipping.checked : false;
+                if (!open && useForShipping && (shippingStep = $('opc-shipping'))) {
+                    action(shippingStep);
                 }
                 break;
             case 'opc-shipping':
-                var sameAsBilling = $('shipping:same_as_billing').checked;
+                var sameAsBilling = $('shipping:same_as_billing');
+                sameAsBilling = sameAsBilling ? sameAsBilling.checked : false;
                 if (open || sameAsBilling) {
                     action(step);
                 }
-                $('billing:use_for_shipping_yes').checked =  sameAsBilling;
-                $('billing:use_for_shipping_no').checked  = !sameAsBilling;
+                if (useForShippingYes = $('billing:use_for_shipping_yes')) {
+                    useForShippingYes.checked = sameAsBilling;
+                }
+                if (useForShippingNo = $('billing:use_for_shipping_no')) {
+                    useForShippingNo.checked = !sameAsBilling;
+                }
                 break;
         }
-        
+
         resizeStepOverlay(step);
     }
 
-    Element.hide('opc-shipping');
+    if (shippingStep = $('opc-shipping')) {
+        Element.hide(shippingStep);
+    }
 
     var accordion = new Zkilleman_Accordion(
                             'checkoutSteps', '.step-title', true, {
