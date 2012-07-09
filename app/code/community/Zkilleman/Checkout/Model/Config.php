@@ -30,6 +30,7 @@
 class Zkilleman_Checkout_Model_Config
 {
     const XML_PATH_CHECKOUT_ENABLED = 'zkilleman_checkout/general/enabled';
+    const XML_PATH_HIDE_SHIPPING    = 'zkilleman_checkout/general/hide_shipping';
     const XML_PATH_CHECKOUT_LAYOUT  = 'zkilleman_checkout/layout/%s';
     
     // Fallback if no code found in config
@@ -43,6 +44,16 @@ class Zkilleman_Checkout_Model_Config
     public function isEnabled()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ENABLED);
+    }
+
+    /**
+     * Whether shipping step should be hidden on "use_same_as_billing"
+     *
+     * @return bool
+     */
+    public function isShippingHidden()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_HIDE_SHIPPING);
     }
     
     /**

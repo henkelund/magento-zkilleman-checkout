@@ -69,6 +69,7 @@
         <zkilleman_checkout>
             <general>
                 <enabled>0</enabled>
+                <hide_shipping>1</hide_shipping>
             </general>
             <layout>
                 <login>top</login>
