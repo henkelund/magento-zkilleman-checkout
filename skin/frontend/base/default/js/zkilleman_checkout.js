@@ -39,7 +39,7 @@
 
             setCallback: function(name, callback)
             {
-                if (!(typeof this.callbacks == 'object')) {
+                if (typeof this.callbacks != 'object') {
                     this.callbacks = {};
                 }
                 if (typeof callback == 'function') {
@@ -116,8 +116,99 @@
         w.Zkilleman_Checkout = Class.create(w.Checkout, {
 
             /**
+             * This is like a second constructor for the checkout object.
+             * We avoid overriding the initialize function for maintenance reasons.
+             *
+             */
+            setup: function(options)
+            {
+                this.addOptions(options);
+                this.accordion.setCallback(
+                    'onToggle',
+                    this.checkoutStepToggle.bind(this)
+                );
+                if (this.getOption('hide_shipping') == true &&
+                        (shippingStep = $('opc-shipping'))) {
+                    Element.hide(shippingStep);
+                }
+                if (activeStep = this.getOption('active_step')) {
+                    accordion.openSection('opc-' + activeStep);
+                }
+            },
+
+            setOption: function(name, value)
+            {
+                if (typeof this.options != 'object') {
+                    this.options = $H({});
+                }
+                this.options.set(name, value);
+            },
+
+            addOptions: function(options)
+            {
+                if (typeof options != 'object') {
+                    return;
+                }
+                for (var key in options) {
+                    this.setOption(key, options[key]);
+                }
+            },
+
+            getOption: function(name)
+            {
+                if (typeof this.options == 'object') {
+                    return this.options.get(name);
+                }
+                return null;
+            },
+
+            /**
+             * Callback for accordion open/close toggle
+             *
+             */
+            checkoutStepToggle: function(step, open)
+            {
+                if (!$(step)) { return; }
+
+                var action = open ? Element.show : Element.hide;
+                switch (step) {
+                    case 'opc-login':
+                        Element.select(step, '.a-item').each(function(el) {
+                            action(el);
+                        });
+                        break;
+                    case 'opc-billing':
+                        if (this.getOption('hide_shipping') == true) {
+                            var useForShipping = $('billing:use_for_shipping_yes');
+                            useForShipping = useForShipping ? useForShipping.checked : false;
+                            if (!open && useForShipping && (shippingStep = $('opc-shipping'))) {
+                                action(shippingStep);
+                            }
+                        }
+                        break;
+                    case 'opc-shipping':
+                        var sameAsBilling = $('shipping:same_as_billing');
+                        sameAsBilling = sameAsBilling ? sameAsBilling.checked : false;
+                        if (useForShippingYes = $('billing:use_for_shipping_yes')) {
+                            useForShippingYes.checked = sameAsBilling;
+                        }
+                        if (useForShippingNo = $('billing:use_for_shipping_no')) {
+                            useForShippingNo.checked = !sameAsBilling;
+                        }
+                        if (this.getOption('hide_shipping') == true) {
+                            if (open || sameAsBilling) {
+                                action(step);
+                            }
+                        }
+                        break;
+                }
+
+                Zkilleman_Checkout.resizeStepOverlay(step);
+            },
+
+            /**
              * 
-             * @param    mixed string
+             * @param    string
              * @override Checkout::reloadProgressBlock
              * @see      /skin/frontend/base/default/js/opcheckout.js
              */
@@ -140,8 +231,9 @@
                 var content = Element.select(step, '.a-item');
                 height = Element.getHeight(content[0]);
             }
-            var overlay = Element.select(step, '.a-item .overlay');
-            Element.setStyle(overlay[0], {'height': height + 'px'});
+            Element.select(step, '.a-item .overlay').each(function(el) {
+                Element.setStyle(el, {'height': height + 'px'});
+            });
         };
     }
 

@@ -28,13 +28,10 @@
  */
 ?>
 <?php
-    $_config         = Mage::getSingleton('zkilleman_checkout/config');
-    /* @var Zkilleman_Checkout_Model_Config */
     $_helper         = Mage::helper('zkilleman_checkout');
     /* @var Zkilleman_Checkout_Helper_Data */
     $_containers     = $_helper->containSteps($this->getSteps(), $this);
     $_containersHtml = array();
-    $_hideShipping   = $_config->isShippingHidden();
 ?>
 <div class="page-title">
     <h1><?php echo $this->__('Checkout') ?></h1>
@@ -76,64 +73,23 @@
         <?php echo $_containersHtml[$container]; ?>
     <?php unset($_containersHtml[$container]); endforeach; ?>
 </div>
+<?php 
+    $localOptions = array();
+    if ($this->getActiveStep()) {
+        $localOptions['active_step'] = $this->getActiveStep();
+    }
+    $optionsJson = $_helper->getCheckoutOptionsJson($localOptions);
+?>
 <script type="text/javascript">
 //<![CDATA[
 
-    function checkoutStepToggle(step, open)
-    {
-        if (!$(step)) { return; }
-        
-        var action = open ? Element.show : Element.hide;
-        switch (step) {
-            case 'opc-login':
-                Element.select(step, '.a-item').each(function(el) {
-                    action(el);
-                });
-                break;
-            case 'opc-billing':
-                <?php if ($_hideShipping): ?>
-                var useForShipping = $('billing:use_for_shipping_yes');
-                useForShipping = useForShipping ? useForShipping.checked : false;
-                if (!open && useForShipping && (shippingStep = $('opc-shipping'))) {
-                    action(shippingStep);
-                }
-                <?php endif; ?>
-                break;
-            case 'opc-shipping':
-                var sameAsBilling = $('shipping:same_as_billing');
-                sameAsBilling = sameAsBilling ? sameAsBilling.checked : false;
-                if (useForShippingYes = $('billing:use_for_shipping_yes')) {
-                    useForShippingYes.checked = sameAsBilling;
-                }
-                if (useForShippingNo = $('billing:use_for_shipping_no')) {
-                    useForShippingNo.checked = !sameAsBilling;
-                }
-                <?php if ($_hideShipping): ?>
-                if (open || sameAsBilling) {
-                    action(step);
-                }
-                <?php endif; ?>
-                break;
-        }
-
-        Zkilleman_Checkout.resizeStepOverlay(step);
-    }
-
-    <?php if ($_hideShipping): ?>
-    if (shippingStep = $('opc-shipping')) {
-        Element.hide(shippingStep);
-    }
-    <?php endif; ?>
-
     var accordion = new Zkilleman_Accordion('checkoutSteps', '.step-title', true);
-    accordion.setCallback('onToggle', checkoutStepToggle);
-    <?php if($this->getActiveStep()): ?>
-    accordion.openSection('opc-<?php echo $this->getActiveStep() ?>');
-    <?php endif ?>
-    var checkout = new Zkilleman_Checkout(accordion, {
+    var checkout  = new Zkilleman_Checkout(accordion, {
         review:     '<?php echo $this->getUrl('checkout/onepage/review') ?>',
         saveMethod: '<?php echo $this->getUrl('checkout/onepage/saveMethod') ?>',
         failure:    '<?php echo $this->getUrl('checkout/cart') ?>'}
     );
+    checkout.setup(<?php echo $optionsJson; ?>);
+
 //]]>
 </script>

@@ -29,6 +29,17 @@
 
 class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    const EVENT_NAME_OPTIONS = 'zkilleman_checkout_options_additional';
+
+    /**
+     *
+     * @return Zkilleman_Checkout_Model_Config 
+     */
+    protected function _getConfig()
+    {
+        return Mage::getSingleton('zkilleman_checkout/config');
+    }
+
     /**
      * Build step layout
      *
@@ -42,7 +53,7 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                                     Mage_Core_Block_Abstract $block = null)
     {
         $containers     = array();
-        $config         = Mage::getSingleton('zkilleman_checkout/config');
+        $config         = $this->_getConfig();
         $containerCodes =
             Mage::getSingleton('zkilleman_checkout/source_containers')
                         ->toOptionArray();
@@ -85,5 +96,32 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $containers;
+    }
+    
+    /**
+     *
+     * @param  array $additional
+     * @return array
+     */
+    public function getCheckoutOptions($additional = array())
+    {
+        $config = $this->_getConfig();
+        $options = new Varien_Object(array_merge(array(
+            'hide_shipping' => $config->isShippingHidden()
+        ), $additional));
+        Mage::dispatchEvent(
+                    self::EVENT_NAME_OPTIONS, array('options' => $options));
+        return (array) $options->getData();
+    }
+    
+    /**
+     *
+     * @param  array $additional
+     * @return string 
+     */
+    public function getCheckoutOptionsJson($additional = array())
+    {
+        return Mage::helper('core')->jsonEncode(
+                    $this->getCheckoutOptions($additional));
     }
 }
