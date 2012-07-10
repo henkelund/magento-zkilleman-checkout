@@ -27,24 +27,44 @@
  */
 
 (function(w) {
-    
-    if (!w.Zkilleman_Accordion) {
-        w.Zkilleman_Accordion = Class.create(Accordion, {
-            
-            initialize: function(elem, clickableEntity, checkAllow, callbacks) {
-                this.container = $(elem);
-                this.checkAllow = checkAllow || false;
-                this.disallowAccessToNextSections = false;
-                this.sections = $$('#' + elem + ' .section');
-                this.currentSection = false;
-                var headers = $$('#' + elem + ' .section ' + clickableEntity);
-                headers.each(function(header) {
-                    Event.observe(header,'click',this.sectionClicked.bindAsEventListener(this));
-                }.bind(this));
-                this.callbacks = callbacks || {};
+
+    if (!w.Zkilleman_Accordion && w.Accordion) {
+
+        /**
+         * This class extends and replaces the Accordion class defined in
+         * /js/varien/accordion.js
+         *
+         */
+        w.Zkilleman_Accordion = Class.create(w.Accordion, {
+
+            setCallback: function(name, callback)
+            {
+                if (!(typeof this.callbacks == 'object')) {
+                    this.callbacks = {};
+                }
+                if (typeof callback == 'function') {
+                    this.callbacks[name] = callback;
+                }
             },
 
-            openSection: function(section) {
+            getCallback: function(name)
+            {
+                if (typeof this.callbacks == 'object' &&
+                        typeof this.callbacks[name] == 'function') {
+                    return this.callbacks[name];
+                } else {
+                    return function() {};
+                }
+            },
+
+            /**
+             * 
+             * @param    mixed string|Element
+             * @override Accordion::openSection
+             * @see      /js/varien/accordion.js
+             */
+            openSection: function(section)
+            {
                 var section = $(section);
 
                 // Check allow
@@ -56,9 +76,7 @@
                     this.closeExistingSection();
                     this.currentSection = section.id;
                     $(this.currentSection).addClassName('active');
-                    if (typeof this.callbacks.onToggle == 'function') {
-                        this.callbacks.onToggle(section.id, true);
-                    }
+                    this.getCallback('onToggle')(section.id, true);
 
                     if (this.disallowAccessToNextSections) {
                         var pastCurrentSection = false;
@@ -74,18 +92,56 @@
                 }
             },
 
-            closeSection: function(section) {
+            /**
+             * 
+             * @param    mixed string|Element
+             * @override Accordion::closeSection
+             * @see      /js/varien/accordion.js
+             */
+            closeSection: function(section)
+            {
                 $(section).removeClassName('active');
-                if (typeof this.callbacks.onToggle == 'function') {
-                    this.callbacks.onToggle(section, false);
-                }
+                this.getCallback('onToggle')(section, false);
             }
         });
     }
 
-    if (w.Checkout && w.Checkout.prototype) {
-        w.Checkout.prototype.reloadProgressBlock = function(toStep) {
-            // ignore progress request
+    if (!w.Zkilleman_Checkout && w.Checkout) {
+
+        /**
+         * This class extends and replaces the Checkout class defined in
+         * /skin/frontend/base/default/js/opcheckout.js
+         *
+         */
+        w.Zkilleman_Checkout = Class.create(w.Checkout, {
+
+            /**
+             * 
+             * @param    mixed string
+             * @override Checkout::reloadProgressBlock
+             * @see      /skin/frontend/base/default/js/opcheckout.js
+             */
+            reloadProgressBlock: function(toStep)
+            {
+                // ignore progress request since we're not using the result
+            }
+        });
+
+        /**
+         * Static helper function used to set the height of inactive step overlays
+         *
+         */
+        w.Zkilleman_Checkout.resizeStepOverlay = function(step)
+        {
+            if (!$(step)) {return;}
+
+            var height = 0;
+            if (!Element.hasClassName(step, 'active')) {
+                var content = Element.select(step, '.a-item');
+                height = Element.getHeight(content[0]);
+            }
+            var overlay = Element.select(step, '.a-item .overlay');
+            Element.setStyle(overlay[0], {'height': height + 'px'});
         };
     }
 

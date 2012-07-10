@@ -42,24 +42,6 @@
 <script type="text/javascript" src="<?php echo $this->getJsUrl('varien/accordion.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/opcheckout.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/zkilleman_checkout.js') ?>"></script>
-<script type="text/javascript">
-//<![CDATA[
-
-    function resizeStepOverlay(step)
-    {
-        if (!$(step)) { return; }
-        
-        var height = 0;
-        if (!Element.hasClassName(step, 'active')) {
-            var content = Element.select(step, '.a-item');
-            height = Element.getHeight(content[0]);
-        }
-        var overlay = Element.select(step, '.a-item .overlay');
-        Element.setStyle(overlay[0], {'height': height + 'px'});
-    }
-
-//]]>
-</script>
 <?php foreach ($_containers as $container => $steps): if (!empty($steps)): ob_start(); ?>
 <ul class="step-container container-<?php echo $container; ?>">
     <?php foreach ($steps as $_stepId => $_stepInfo): ?>
@@ -75,7 +57,7 @@
         </div>
         <script type="text/javascript">
         //<![CDATA[
-            resizeStepOverlay('opc-<?php echo $_stepId; ?>');
+            Zkilleman_Checkout.resizeStepOverlay('opc-<?php echo $_stepId; ?>');
         //]]>
         </script>
     </li>
@@ -134,7 +116,7 @@
                 break;
         }
 
-        resizeStepOverlay(step);
+        Zkilleman_Checkout.resizeStepOverlay(step);
     }
 
     <?php if ($_hideShipping): ?>
@@ -143,15 +125,12 @@
     }
     <?php endif; ?>
 
-    var accordion = new Zkilleman_Accordion(
-                            'checkoutSteps', '.step-title', true, {
-                                onToggle: checkoutStepToggle
-                            });
+    var accordion = new Zkilleman_Accordion('checkoutSteps', '.step-title', true);
+    accordion.setCallback('onToggle', checkoutStepToggle);
     <?php if($this->getActiveStep()): ?>
     accordion.openSection('opc-<?php echo $this->getActiveStep() ?>');
-    resizeStepOverlay('opc-<?php echo $this->getActiveStep() ?>');
     <?php endif ?>
-    var checkout = new Checkout(accordion, {
+    var checkout = new Zkilleman_Checkout(accordion, {
         review:     '<?php echo $this->getUrl('checkout/onepage/review') ?>',
         saveMethod: '<?php echo $this->getUrl('checkout/onepage/saveMethod') ?>',
         failure:    '<?php echo $this->getUrl('checkout/cart') ?>'}
