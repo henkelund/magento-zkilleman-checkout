@@ -134,6 +134,50 @@
                 if (activeStep = this.getOption('active_step')) {
                     accordion.openSection('opc-' + activeStep);
                 }
+                // this._setupMethod();
+            },
+
+            _setupMethod: function()
+            {
+                var loginStep        = $('opc-login')
+                ,   loginGuest       = $('login:guest')
+                ,   loginRegister    = $('login:register')
+                ,   buttonsContainer = $('billing-buttons-container')
+                ;
+
+                // make sure all expected elements exist
+                if (!(loginStep && loginGuest && loginRegister && buttonsContainer)) {
+                    return false;
+                }
+
+                var methodsContainer = loginGuest.up('ul');
+                if (!methodsContainer) {
+                    return false;
+                }
+
+                // move methods from login to billing step
+                Element.hide(loginStep);
+                Element.remove(methodsContainer);
+                Element.addClassName(methodsContainer, 'checkout-methods');
+                buttonsContainer.insert({before: methodsContainer});
+
+                // force at least one method to be checked
+                if (!loginGuest.checked && !loginRegister.checked) {
+                    loginGuest.checked = !(loginRegister.checked = 
+                                (this.getOption('checkout_method') == 'register'));
+                }
+
+                // save checked method, leave & remove login step
+                this.setMethod();
+                Element.remove(loginStep);
+
+                // bind checkboxes to setMethod (toggles password fields & saves method)
+                var that = this;
+                [loginGuest, loginRegister].each(function(el) {
+                    el.observe('click', that.setMethod.bind(that));
+                });
+
+                return true;
             },
 
             setOption: function(name, value)

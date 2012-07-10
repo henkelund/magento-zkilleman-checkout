@@ -103,3 +103,8 @@
 #opc-login .step-title {
     border-bottom: 1px solid #A3AEB3;
 }
+
+#opc-billing .checkout-methods {
+    border-top: 1px solid #E4E4E4;
+    padding-top: 8px;
+}
