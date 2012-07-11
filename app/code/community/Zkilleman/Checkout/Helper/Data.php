@@ -107,7 +107,9 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $config = $this->_getConfig();
         $options = new Varien_Object(array_merge(array(
-            'hide_shipping' => $config->isShippingHidden()
+            'hide_shipping' => $config->isShippingHidden(),
+            'login_mode'    => $config->getLoginMode(),
+            'guest_allowed' => $config->isAllowedGuestCheckout()
         ), $additional));
         Mage::dispatchEvent(
                     self::EVENT_NAME_OPTIONS, array('options' => $options));

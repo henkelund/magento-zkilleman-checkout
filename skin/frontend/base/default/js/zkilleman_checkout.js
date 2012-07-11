@@ -217,9 +217,11 @@
                 var action = open ? Element.show : Element.hide;
                 switch (step) {
                     case 'opc-login':
-                        Element.select(step, '.a-item').each(function(el) {
-                            action(el);
-                        });
+                        if (this.getOption('login_mode') == 'minimize') {
+                            Element.select(step, '.a-item').each(function(el) {
+                                action(el);
+                            });
+                        }
                         break;
                     case 'opc-billing':
                         if (this.getOption('hide_shipping') == true) {

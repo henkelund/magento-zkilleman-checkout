@@ -30,8 +30,13 @@
 class Zkilleman_Checkout_Model_Config
 {
     const XML_PATH_CHECKOUT_ENABLED = 'zkilleman_checkout/general/enabled';
+    const XML_PATH_LOGIN_MODE       = 'zkilleman_checkout/general/login_mode';
     const XML_PATH_HIDE_SHIPPING    = 'zkilleman_checkout/general/hide_shipping';
     const XML_PATH_CHECKOUT_LAYOUT  = 'zkilleman_checkout/layout/%s';
+
+    // There's a const for this in Mage_Checkout_Helper_Data as well
+    // but we keep our own copy for compatibility with older Magento versions
+    const XML_PATH_CUSTOMER_MUST_BE_LOGGED = 'checkout/options/customer_must_be_logged';
     
     // Fallback if no code found in config
     const DEFAULT_CONTAINER_CODE    = 'right';
@@ -44,6 +49,51 @@ class Zkilleman_Checkout_Model_Config
     public function isEnabled()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ENABLED);
+    }
+
+    /**
+     * Get login step display mode
+     *
+     * @return string
+     */
+    public function getLoginMode()
+    {
+        $mode = Mage::getStoreConfig(self::XML_PATH_LOGIN_MODE);
+
+        if ($mode == 'hide' && $this->isLoginRequired()) {
+
+            // We can't hide login, let's fall back on something else
+            $modes = array_keys(
+                        Mage::getModel('zkilleman_checkout/source_loginmodes')
+                                ->toOptionArray());
+            foreach ($modes as $newMode) {
+                if ($newMode != $mode) {
+                    return $newMode;
+                }
+            }
+        }
+
+        return $mode;
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    public function isLoginRequired()
+    {
+        return !$this->isAllowedGuestCheckout() &&
+                Mage::getStoreConfigFlag(self::XML_PATH_CUSTOMER_MUST_BE_LOGGED);
+    }
+
+    /**
+     *
+     * @return bool 
+     */
+    public function isAllowedGuestCheckout()
+    {
+        return Mage::helper('checkout')->isAllowedGuestCheckout(
+                                Mage::getSingleton('checkout/session')->getQuote());
     }
 
     /**
