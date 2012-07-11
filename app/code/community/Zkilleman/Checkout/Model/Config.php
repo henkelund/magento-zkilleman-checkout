@@ -78,6 +78,15 @@ class Zkilleman_Checkout_Model_Config
 
     /**
      *
+     * @return bool 
+     */
+    public function isLoginHidden()
+    {
+        return $this->getLoginMode() == 'hide';
+    }
+
+    /**
+     *
      * @return bool
      */
     public function isLoginRequired()

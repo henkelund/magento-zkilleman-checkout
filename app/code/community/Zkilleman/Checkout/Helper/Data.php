@@ -74,12 +74,19 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                 if ($visible) {
                     $stepInfo['counter'] = ++$i;
                     $containers[$containerCode][$stepCode] = $stepInfo;
-                    if ($stepCode == 'shipping') {
-                        $shippingContainer = $containerCode;
-                        --$i;
-                    }
-                    if ($stepCode == 'billing') {
-                        $billingContainer = $containerCode;
+                    switch ($stepCode) {
+                        case 'shipping':
+                            $shippingContainer = $containerCode;
+                            --$i;
+                            break;
+                        case 'billing':
+                            $billingContainer = $containerCode;
+                            break;
+                        case 'login':
+                            if ($config->isLoginHidden()) {
+                                --$i;
+                            }
+                            break;
                     }
                 }
             } else {
