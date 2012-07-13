@@ -29,19 +29,66 @@
 
 class Zkilleman_Checkout_Model_Observer
 {
-    
+    const EVENT_NAME_SHIPPING_COUNTRY = 'zkilleman_checkout_shipping_country';
+
+    /**
+     *
+     * @return Zkilleman_Checkout_Model_Config
+     */
+    protected function _getConfig()
+    {
+        return Mage::getSingleton('zkilleman_checkout/config');
+    }
+
     /**
      * Remove Zkilleman_Checkout layout if disabled in config
      *
-     * @param Varien_Event_Observer $observer 
+     * @param Varien_Event_Observer $observer
      */
     public function afterGetLayoutUpdates(Varien_Event_Observer $observer)
     {
-        if (!Mage::getSingleton('zkilleman_checkout/config')->isEnabled()) {
+        if (!$this->_getConfig()->isEnabled()) {
             $updates = $observer->getUpdates();
             if (isset($updates->zkilleman_checkout)) {
                 unset($updates->zkilleman_checkout);
             }
+        }
+    }
+
+    /**
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function beforeLayoutRender(Varien_Event_Observer $observer)
+    {
+        if ($this->_getConfig()->shouldEstimateShippingMethods()) {
+            $this->estimateShippingMethods();
+        }
+    }
+
+    /**
+     * If country id is not yet set in the quotes shipping address, set it to the
+     * stores default to estimate shipping rates
+     *
+     */
+    public function estimateShippingMethods()
+    {
+        $address = Mage::getSingleton('checkout/session')
+                            ->getQuote()->getShippingAddress();
+
+        if ($address && !$address->getCountryId()) {
+            $country = new Varien_Object(array(
+                            'country_id' => Mage::helper('core')
+                                                ->getDefaultCountry()));
+
+            // Give observer a chance to do an ip lookup for a better estimate
+            Mage::dispatchEvent(
+                    self::EVENT_NAME_SHIPPING_COUNTRY, array('country' => $country));
+
+            $address->setCountryId($country->getCountryId())
+                    ->setCollectShippingRates(true)
+                    ->collectShippingRates()
+                    ->save();
         }
     }
 }

@@ -29,15 +29,16 @@
 
 class Zkilleman_Checkout_Model_Config
 {
-    const XML_PATH_CHECKOUT_ENABLED = 'zkilleman_checkout/general/enabled';
-    const XML_PATH_LOGIN_MODE       = 'zkilleman_checkout/general/login_mode';
-    const XML_PATH_HIDE_SHIPPING    = 'zkilleman_checkout/general/hide_shipping';
-    const XML_PATH_CHECKOUT_LAYOUT  = 'zkilleman_checkout/layout/%s';
+    const XML_PATH_CHECKOUT_ENABLED  = 'zkilleman_checkout/general/enabled';
+    const XML_PATH_LOGIN_MODE        = 'zkilleman_checkout/general/login_mode';
+    const XML_PATH_HIDE_SHIPPING     = 'zkilleman_checkout/general/hide_shipping';
+    const XML_PATH_ESTIMATE_SHIPPING = 'zkilleman_checkout/general/estimate_shipping_methods';
+    const XML_PATH_CHECKOUT_LAYOUT   = 'zkilleman_checkout/layout/%s';
 
     // There's a const for this in Mage_Checkout_Helper_Data as well
     // but we keep our own copy for compatibility with older Magento versions
     const XML_PATH_CUSTOMER_MUST_BE_LOGGED = 'checkout/options/customer_must_be_logged';
-    
+
     // Fallback if no code found in config
     const DEFAULT_CONTAINER_CODE    = 'right';
 
@@ -78,7 +79,7 @@ class Zkilleman_Checkout_Model_Config
 
     /**
      *
-     * @return bool 
+     * @return bool
      */
     public function isLoginHidden()
     {
@@ -97,7 +98,7 @@ class Zkilleman_Checkout_Model_Config
 
     /**
      *
-     * @return bool 
+     * @return bool
      */
     public function isAllowedGuestCheckout()
     {
@@ -114,12 +115,12 @@ class Zkilleman_Checkout_Model_Config
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_HIDE_SHIPPING);
     }
-    
+
     /**
      * Return the intended layout position for the given checkout step
      *
      * @param  string $stepCode
-     * @return string 
+     * @return string
      */
     public function getStepContainerCode($stepCode)
     {
@@ -132,5 +133,23 @@ class Zkilleman_Checkout_Model_Config
             $container = self::DEFAULT_CONTAINER_CODE;
         }
         return $container;
+    }
+
+    /**
+     * Whether shipping country should be guessed in order to collect shipping rates.
+     *
+     * @see    Zkilleman_Checkout_Model_Observer::beforeLayoutRender()
+     * @param  Mage_Sales_Model_Quote $quote
+     * @return bool
+     */
+    public function shouldEstimateShippingMethods(
+                            Mage_Sales_Model_Quote $quote = null)
+    {
+        if (!$quote) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        return Mage::getStoreConfigFlag(
+                    self::XML_PATH_ESTIMATE_SHIPPING) && !$quote->isVirtual();
     }
 }

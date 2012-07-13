@@ -63,6 +63,14 @@
                     </zkilleman_checkout_layout_updates>
                 </observers>
             </core_layout_update_updates_get_after>
+            <controller_action_layout_render_before_checkout_onepage_index>
+                <observers>
+                    <zkilleman_checkout_layout_render_before>
+                        <class>zkilleman_checkout/observer</class>
+                        <method>beforeLayoutRender</method>
+                    </zkilleman_checkout_layout_render_before>
+                </observers>
+            </controller_action_layout_render_before_checkout_onepage_index>
         </events>
     </frontend>
     <default>
@@ -71,6 +79,7 @@
                 <enabled>0</enabled>
                 <login_mode>hide</login_mode>
                 <hide_shipping>1</hide_shipping>
+                <estimate_shipping_methods>1</estimate_shipping_methods>
             </general>
             <layout>
                 <login>top</login>
