@@ -41,13 +41,22 @@ class Zkilleman_Checkout_Model_Observer
     }
 
     /**
+     *
+     * @return bool
+     */
+    protected function _isEnabled()
+    {
+        return $this->_getConfig()->isEnabled();
+    }
+
+    /**
      * Remove Zkilleman_Checkout layout if disabled in config
      *
      * @param Varien_Event_Observer $observer
      */
     public function afterGetLayoutUpdates(Varien_Event_Observer $observer)
     {
-        if (!$this->_getConfig()->isEnabled()) {
+        if (!$this->_isEnabled()) {
             $updates = $observer->getUpdates();
             if (isset($updates->zkilleman_checkout)) {
                 unset($updates->zkilleman_checkout);
@@ -61,6 +70,10 @@ class Zkilleman_Checkout_Model_Observer
      */
     public function beforeLayoutRender(Varien_Event_Observer $observer)
     {
+        if (!$this->_isEnabled()) {
+            return;
+        }
+
         if ($this->_getConfig()->shouldEstimateShippingMethods()) {
             $this->estimateShippingMethods();
         }
@@ -75,8 +88,11 @@ class Zkilleman_Checkout_Model_Observer
     {
         $address = Mage::getSingleton('checkout/session')
                             ->getQuote()->getShippingAddress();
+        /* @var $address Mage_Sales_Model_Quote_Address */
 
-        if ($address && !$address->getCountryId()) {
+        if ($address &&
+                (!$address->getCountryId() ||
+                  $address->getShippingRatesCollection()->count() == 0)) {
             $country = new Varien_Object(array(
                             'country_id' => Mage::helper('core')
                                                 ->getDefaultCountry()));
