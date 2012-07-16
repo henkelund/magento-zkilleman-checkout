@@ -34,6 +34,7 @@ class Zkilleman_Checkout_Model_Config
     const XML_PATH_HIDE_SHIPPING     = 'zkilleman_checkout/general/hide_shipping';
     const XML_PATH_ESTIMATE_SHIPPING = 'zkilleman_checkout/general/estimate_shipping_methods';
     const XML_PATH_SHOW_REVIEW       = 'zkilleman_checkout/general/show_review';
+    const XML_PATH_AUTO_CONTINUE     = 'zkilleman_checkout/general/auto_continue';
     const XML_PATH_CHECKOUT_LAYOUT   = 'zkilleman_checkout/layout/%s';
 
     // There's a const for this in Mage_Checkout_Helper_Data as well
@@ -162,5 +163,15 @@ class Zkilleman_Checkout_Model_Config
     public function shouldShowReviewBlock()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_SHOW_REVIEW);
+    }
+
+    /**
+     * Whether optionless steps should be bypassed
+     *
+     * @return boolean
+     */
+    public function isAutoContinueEnabled()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_AUTO_CONTINUE);
     }
 }

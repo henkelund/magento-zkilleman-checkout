@@ -81,6 +81,7 @@
                 <hide_shipping>1</hide_shipping>
                 <estimate_shipping_methods>1</estimate_shipping_methods>
                 <show_review>1</show_review>
+                <auto_continue>1</auto_continue>
             </general>
             <layout>
                 <login>top</login>

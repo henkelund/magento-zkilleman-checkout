@@ -58,7 +58,7 @@
             },
 
             /**
-             * 
+             *
              * @param    mixed string|Element
              * @override Accordion::openSection
              * @see      /js/varien/accordion.js
@@ -81,8 +81,10 @@
                     if (this.disallowAccessToNextSections) {
                         var pastCurrentSection = false;
                         for (var i=0; i<this.sections.length; i++) {
-                            if (pastCurrentSection) {
-                                Element.removeClassName(this.sections[i], 'allow')
+                            if (pastCurrentSection ||
+                                Element.hasClassName(this.sections[i], 'disallow')) {
+                                Element.removeClassName(this.sections[i], 'allow');
+                                Element.removeClassName(this.sections[i], 'disallow');
                             }
                             if (this.sections[i].id==section.id) {
                                 pastCurrentSection = true;
@@ -93,7 +95,7 @@
             },
 
             /**
-             * 
+             *
              * @param    mixed string|Element
              * @override Accordion::closeSection
              * @see      /js/varien/accordion.js
@@ -173,7 +175,7 @@
 
                     // force at least one method to be checked
                     if (!loginGuest.checked && !loginRegister.checked) {
-                        loginGuest.checked = !(loginRegister.checked = 
+                        loginGuest.checked = !(loginRegister.checked =
                                     (this.getOption('checkout_method') == 'register'));
                     }
 
@@ -187,6 +189,34 @@
                 // save checked method, leave & remove login step
                 this.setMethod();
                 Element.remove(loginStep);
+
+                return true;
+            },
+
+            _autoContinue: function(step)
+            {
+                var form   = $$('#' + step + ' form').first()
+                ,   button = $$('#' + step + ' .buttons-set .button').first()
+                ,   radios = []
+                ;
+
+                if (!form || !button || typeof button.onclick != 'function') {
+                    return false;
+                }
+
+                radios = form.getInputs('radio');
+
+                if (radios.size() != 1 ||
+                        (form.getInputs().size() -
+                            form.getInputs('hidden').size()) != 1) {
+                    return false;
+                }
+
+                radios.first().checked = true;
+
+                $(step).addClassName('disallow');
+
+                window.setTimeout(button.onclick, 100);
 
                 return true;
             },
@@ -258,13 +288,19 @@
                             }
                         }
                         break;
+                    case 'opc-shipping_method':
+                    case 'opc-payment':
+                        if (open && this.getOption('auto_continue') == true) {
+                            this._autoContinue(step);
+                        }
+                        break;
                 }
 
                 Zkilleman_Checkout.resizeStepOverlay(step);
             },
 
             /**
-             * 
+             *
              * @param    string
              * @override Checkout::reloadProgressBlock
              * @see      /skin/frontend/base/default/js/opcheckout.js
