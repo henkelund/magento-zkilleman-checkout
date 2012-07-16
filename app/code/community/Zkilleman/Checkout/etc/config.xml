@@ -80,6 +80,7 @@
                 <login_mode>hide</login_mode>
                 <hide_shipping>1</hide_shipping>
                 <estimate_shipping_methods>1</estimate_shipping_methods>
+                <show_review>1</show_review>
             </general>
             <layout>
                 <login>top</login>

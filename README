@@ -1,3 +1,2 @@
 Known issues:
   * Column float problems w/ IE6
-  * Empty review step before payment save (might also be outside the scope)

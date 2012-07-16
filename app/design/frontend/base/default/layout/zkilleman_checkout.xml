@@ -29,22 +29,57 @@
  */
 -->
 <layout version="0.1.0">
-    
+
     <checkout_onepage_index>
-        
+
         <remove name="left" />
         <remove name="right" />
 
         <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
         </reference>
-        
+
         <reference name="head">
-            <action method="addCss"><stylesheet>css/zkilleman_checkout.css</stylesheet></action>
+            <action method="addCss">
+                <stylesheet>css/zkilleman_checkout.css</stylesheet>
+            </action>
         </reference>
-        
+
         <reference name="checkout.onepage">
-            <action method="setTemplate"><template>zkilleman_checkout/onepage.phtml</template></action>
+            <action method="setTemplate">
+                <template>zkilleman_checkout/onepage.phtml</template>
+            </action>
+        </reference>
+
+        <reference name="checkout.onepage.review">
+            <block type="checkout/onepage_review_info" name="checkout.onepage.review.info" as="info" template="checkout/onepage/review/info.phtml">
+                <action method="addItemRender">
+                    <type>default</type>
+                    <block>checkout/cart_item_renderer</block>
+                    <template>checkout/onepage/review/item.phtml</template>
+                </action>
+                <action method="addItemRender">
+                    <type>grouped</type>
+                    <block>checkout/cart_item_renderer_grouped</block>
+                    <template>checkout/onepage/review/item.phtml</template>
+                </action>
+                <action method="addItemRender">
+                    <type>configurable</type>
+                    <block>checkout/cart_item_renderer_configurable</block>
+                    <template>checkout/onepage/review/item.phtml</template>
+                </action>
+                <block type="checkout/cart_totals" name="checkout.onepage.review.info.totals" as="totals" template="checkout/onepage/review/totals.phtml"/>
+                <block type="core/text_list" name="checkout.onepage.review.info.items.before" as="items_before" translate="label">
+                    <label>Items Before</label>
+                </block>
+                <block type="core/text_list" name="checkout.onepage.review.info.items.after" as="items_after" translate="label">
+                    <label>Items After</label>
+                </block>
+                <block type="checkout/agreements" name="checkout.onepage.agreements" as="agreements" template="checkout/onepage/agreements.phtml"/>
+                <block type="core/template" name="checkout.onepage.review.button" as="button" template="checkout/onepage/review/button.phtml"/>
+            </block>
         </reference>
     </checkout_onepage_index>
 </layout>

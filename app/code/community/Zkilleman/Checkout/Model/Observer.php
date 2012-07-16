@@ -77,6 +77,12 @@ class Zkilleman_Checkout_Model_Observer
         if ($this->_getConfig()->shouldEstimateShippingMethods()) {
             $this->estimateShippingMethods();
         }
+
+        if (!$this->_getConfig()->shouldShowReviewBlock() &&
+                ($block = Mage::app()->getLayout()
+                                            ->getBlock('checkout.onepage.review'))) {
+            $block->unsetChild('info');
+        }
     }
 
     /**
