@@ -73,12 +73,13 @@
         <?php echo $_containersHtml[$container]; ?>
     <?php unset($_containersHtml[$container]); endforeach; ?>
 </div>
-<?php 
+<?php
     $localOptions = array();
     if ($this->getActiveStep()) {
         $localOptions['active_step'] = $this->getActiveStep();
     }
-    $optionsJson = $_helper->getCheckoutOptionsJson($localOptions);
+    $optionsJson = $_helper->getCheckoutOptionsJson(
+                                $this->getQuote(), $localOptions);
 ?>
 <script type="text/javascript">
 //<![CDATA[

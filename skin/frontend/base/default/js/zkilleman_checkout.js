@@ -137,6 +137,7 @@
                     accordion.openSection('opc-' + activeStep);
                 }
                 this._setupMethod();
+                this._setupAddresses();
             },
 
             _setupMethod: function()
@@ -190,6 +191,45 @@
                 this.setMethod();
                 Element.remove(loginStep);
 
+                return true;
+            },
+
+            _setupAddresses: function()
+            {
+                var type
+                ,   key
+                ,   field
+                ,   updater
+                ,   address
+                ,   addresses = this.getOption('addresses')
+                ;
+
+                if (typeof addresses != 'object') {
+                    return false;
+                }
+
+                for (type in addresses) {
+                    address = addresses[type];
+                    if (!address || typeof address != 'object') {
+                        continue;
+                    }
+                    if (address.country_id && (field = $(type + ':country_id'))) {
+                        Form.Element.setValue(field, address.country_id);
+                        updater     = w[type + 'RegionUpdater'] || null;
+                        if (typeof updater == 'object' &&
+                                typeof updater.update == 'function') {
+                            updater.update();
+                        }
+                    }
+                    for (key in address) {
+                        if (key == 'country_id') {
+                            continue;
+                        }
+                        if (field = $(type + ':' + key)) {
+                            Form.Element.setValue(field, address[key]);
+                        }
+                    }
+                }
                 return true;
             },
 

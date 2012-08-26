@@ -82,6 +82,7 @@
                 <estimate_shipping_methods>1</estimate_shipping_methods>
                 <show_review>1</show_review>
                 <auto_continue>1</auto_continue>
+                <sticky_addresses>1</sticky_addresses>
             </general>
             <layout>
                 <login>top</login>

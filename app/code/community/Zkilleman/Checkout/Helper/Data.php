@@ -33,7 +33,7 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      *
-     * @return Zkilleman_Checkout_Model_Config 
+     * @return Zkilleman_Checkout_Model_Config
      */
     protected function _getConfig()
     {
@@ -95,7 +95,7 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                         $containerCode, $stepCode));
             }
         }
-        
+
         if ($shippingContainer && $billingContainer) {
             $counter  = $containers[$billingContainer]['billing']['counter'];
             $counter .= 'b';
@@ -104,34 +104,84 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $containers;
     }
-    
+
     /**
      *
      * @param  array $additional
      * @return array
      */
-    public function getCheckoutOptions($additional = array())
+    public function getCheckoutOptions(
+                                        Mage_Sales_Model_Quote $quote,
+                                        $additional = array())
     {
-        $config = $this->_getConfig();
+        $config  = $this->_getConfig();
         $options = new Varien_Object(array_merge(array(
             'hide_shipping' => $config->isShippingHidden(),
             'login_mode'    => $config->getLoginMode(),
             'guest_allowed' => $config->isAllowedGuestCheckout(),
             'auto_continue' => $config->isAutoContinueEnabled()
         ), $additional));
+        if ($config->isStickyAddressesEnabled()) {
+            $options['addresses'] = array(
+                'billing'  => $this->getAddressFormData($quote->getBillingAddress()),
+                'shipping' => $this->getAddressFormData($quote->getShippingAddress())
+            );
+        }
         Mage::dispatchEvent(
                     self::EVENT_NAME_OPTIONS, array('options' => $options));
         return (array) $options->getData();
     }
-    
+
     /**
      *
      * @param  array $additional
-     * @return string 
+     * @return string
      */
-    public function getCheckoutOptionsJson($additional = array())
+    public function getCheckoutOptionsJson(
+                                            Mage_Sales_Model_Quote $quote,
+                                            $additional = array())
     {
         return Mage::helper('core')->jsonEncode(
-                    $this->getCheckoutOptions($additional));
+                    $this->getCheckoutOptions($quote, $additional));
+    }
+
+    /**
+     *
+     * @param  Mage_Sales_Model_Quote_Address $address
+     * @return string
+     */
+    public function getAddressFormData(Mage_Sales_Model_Quote_Address $address)
+    {
+        if (!$address) {
+            return null;
+        }
+        $helper = Mage::helper('customer/address');
+        $data   = array();
+        $keys   = array(
+            'firstname' , 'lastname'   ,
+            'company'   , 'email'      ,
+            'street'    , 'city'       ,
+            'region'    , 'region_id'  ,
+            'postcode'  , 'country_id' ,
+            'telephone' , 'fax'
+        );
+        foreach ($keys as $key) {
+            if ($address->hasData($key) &&
+                    is_scalar($value = $address->getData($key))) {
+                $data[$key] = (string) $value;
+            }
+        }
+
+        if (isset($data['street'])) {
+            $lines = array_pad(
+                            explode("\n", $data['street']),
+                            max(1, $helper->getStreetLines()),
+                            '');
+            for ($i = 0; $i < count($lines); ++$i) {
+                $data[sprintf('street%d', $i + 1)] = $lines[$i];
+            }
+            unset($data['street']);
+        }
+        return count($data) > 0 ? $data : null;
     }
 }
