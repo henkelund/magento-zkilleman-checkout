@@ -138,6 +138,7 @@
                 }
                 this._setupMethod();
                 this._setupAddresses();
+                this._setupAutosave();
             },
 
             _setupMethod: function()
@@ -215,8 +216,9 @@
                     }
                     if (address.country_id && (field = $(type + ':country_id'))) {
                         Form.Element.setValue(field, address.country_id);
-                        updater     = w[type + 'RegionUpdater'] || null;
-                        if (typeof updater == 'object' &&
+                        updater = w[type + 'RegionUpdater'] || false;
+                        if (updater &&
+                                typeof updater == 'object' &&
                                 typeof updater.update == 'function') {
                             updater.update();
                         }
@@ -230,6 +232,51 @@
                         }
                     }
                 }
+                return true;
+            },
+
+            _setupAutosave: function()
+            {
+                var saveUrl = this.getOption('save_address_url');
+                if (!saveUrl) {
+                    return false;
+                }
+                var streetPattern = /(billing|shipping)\[street\]\[\]/;
+                ['billing', 'shipping'].each(function(type) {
+                    var form = $('co-' + type + '-form');
+                    if (!form) {
+                        return;
+                    }
+                    form.getElements().each(function(field) {
+                        field = $(field);
+                        if (field.tagName.toLowerCase() == 'select' ||
+                                    field.type.toLowerCase() == 'text') {
+
+                            Event.observe(field, 'blur', function(evt) {
+                                var name = this.readAttribute('name');
+
+                                if (Validation.validate(this)) {
+                                    var postData = '';
+                                    if (streetPattern.test(name)) {
+                                        postData = [];
+                                        form.select('input[name=\'' + name + '\']')
+                                                .each(function(elem) {
+                                            postData.push(elem.serialize());
+                                        });
+                                        postData = postData.join('&');
+                                    } else {
+                                        postData = this.serialize();
+                                    }
+                                    new Ajax.Request(saveUrl, {
+                                            method     : 'post',
+                                            parameters : postData
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                    });
+                });
                 return true;
             },
 
@@ -357,7 +404,7 @@
          */
         w.Zkilleman_Checkout.resizeStepOverlay = function(step)
         {
-            if (!$(step)) {return;}
+            if (!$(step)) { return; }
 
             var height = 0;
             if (!Element.hasClassName(step, 'active')) {

@@ -47,6 +47,15 @@
         </helpers>
     </global>
     <frontend>
+        <routers>
+            <zkilleman_checkout>
+                <use>standard</use>
+                <args>
+                    <module>Zkilleman_Checkout</module>
+                    <frontName>zkilleman_checkout</frontName>
+                </args>
+            </zkilleman_checkout>
+        </routers>
         <layout>
             <updates>
                 <zkilleman_checkout>
