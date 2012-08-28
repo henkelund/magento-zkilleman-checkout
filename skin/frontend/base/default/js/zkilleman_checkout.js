@@ -124,6 +124,7 @@
              */
             setup: function(options)
             {
+                this.fieldValues = {};
                 this.addOptions(options);
                 this.accordion.setCallback(
                     'onToggle',
@@ -215,6 +216,7 @@
                         continue;
                     }
                     if (address.country_id && (field = $(type + ':country_id'))) {
+                        this.fieldValues[field.identify()] = address.country_id;
                         Form.Element.setValue(field, address.country_id);
                         updater = w[type + 'RegionUpdater'] || false;
                         if (updater &&
@@ -228,6 +230,7 @@
                             continue;
                         }
                         if (field = $(type + ':' + key)) {
+                            this.fieldValues[field.identify()] = address[key];
                             Form.Element.setValue(field, address[key]);
                         }
                     }
@@ -237,7 +240,8 @@
 
             _setupAutosave: function()
             {
-                var saveUrl = this.getOption('save_address_url');
+                var self    = this
+                ,   saveUrl = this.getOption('save_address_url');
                 if (!saveUrl) {
                     return false;
                 }
@@ -253,9 +257,15 @@
                                     field.type.toLowerCase() == 'text') {
 
                             Event.observe(field, 'blur', function(evt) {
-                                var name = this.readAttribute('name');
+                                var name   = this.readAttribute('name')
+                                ,   oldVal = self.fieldValues[this.identify()] || ''
+                                ,   newVal = $F(this);
 
-                                if (Validation.validate(this)) {
+                                if (newVal != oldVal  &&
+                                        (newVal == '' ||
+                                            Validation.validate(this))) {
+
+                                    self.fieldValues[this.identify()] = newVal;
                                     var postData = '';
                                     if (streetPattern.test(name)) {
                                         postData = [];
