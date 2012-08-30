@@ -127,6 +127,10 @@ class Zkilleman_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                 'shipping' => $this->getAddressFormData($quote->getShippingAddress())
             );
         }
+        if ($config->isAddressAutosaveEnabled()) {
+            $options['save_address_url'] =
+                Mage::getUrl('zkilleman_checkout/address/save');
+        }
         Mage::dispatchEvent(
                     self::EVENT_NAME_OPTIONS, array('options' => $options));
         return (array) $options->getData();

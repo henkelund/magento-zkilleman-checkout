@@ -185,4 +185,17 @@ class Zkilleman_Checkout_Model_Config
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_STICKY_ADDRESSES);
     }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function isAddressAutosaveEnabled()
+    {
+        return $this->isStickyAddressesEnabled() &&
+                    count(
+                            Mage::getSingleton('customer/session')
+                                                ->getCustomer()->getAddresses()
+                            ) == 0;
+    }
 }
