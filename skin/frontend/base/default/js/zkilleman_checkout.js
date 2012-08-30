@@ -130,12 +130,13 @@
                     'onToggle',
                     this.checkoutStepToggle.bind(this)
                 );
-                if (this.getOption('hide_shipping') == true &&
-                        (shippingStep = $('opc-shipping'))) {
+                var shippingStep = $('opc-shipping')
+                ,   activeStep   = this.getOption('active_step');
+                if (this.getOption('hide_shipping') == true && shippingStep) {
                     Element.hide(shippingStep);
                 }
-                if (activeStep = this.getOption('active_step')) {
-                    accordion.openSection('opc-' + activeStep);
+                if (activeStep) {
+                    this.accordion.openSection('opc-' + activeStep);
                 }
                 this._setupMethod();
                 this._setupAddresses();
@@ -313,7 +314,7 @@
 
                 $(step).addClassName('disallow');
 
-                window.setTimeout(button.onclick, 100);
+                w.setTimeout(button.onclick, 100);
 
                 return true;
             },
@@ -352,7 +353,11 @@
             {
                 if (!$(step)) { return; }
 
-                var action = open ? Element.show : Element.hide;
+                var action = open ? Element.show : Element.hide
+                ,   shippingStep
+                ,   useForShippingYes
+                ,   useForShippingNo;
+
                 switch (step) {
                     case 'opc-login':
                         if (this.getOption('login_mode') == 'minimize') {
