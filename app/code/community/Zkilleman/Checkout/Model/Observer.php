@@ -99,10 +99,12 @@ class Zkilleman_Checkout_Model_Observer
         if ($address &&
                 (!$address->getCountryId() ||
                   $address->getShippingRatesCollection()->count() == 0)) {
-            $country = new Varien_Object(array(
-                            'country_id' => Mage::helper('core')
-                                                ->getDefaultCountry()));
 
+            $countryId = Mage::registry('client_country_id') ?
+                            Mage::registry('client_country_id') :
+                            Mage::helper('core')->getDefaultCountry();
+
+            $country = new Varien_Object(array('country_id' => $countryId));
             // Give observer a chance to do an ip lookup for a better estimate
             Mage::dispatchEvent(
                     self::EVENT_NAME_SHIPPING_COUNTRY, array('country' => $country));
