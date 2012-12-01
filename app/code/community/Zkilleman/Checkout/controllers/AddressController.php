@@ -52,7 +52,7 @@ class Zkilleman_Checkout_AddressController extends Mage_Core_Controller_Front_Ac
             }
             $billingAddress->addData($billingData)->save();
         }
-        if ($shippingAddress = $quote->getBillingAddress()) {
+        if ($shippingAddress = $quote->getShippingAddress()) {
             /* @var $shippingAddress Mage_Sales_Model_Quote_Address */
             if (isset($shippingData['street']) && is_array($shippingData['street'])) {
                 $shippingData['street'] = implode("\n", $shippingData['street']);
