@@ -30,11 +30,11 @@
 class Zkilleman_Checkout_Model_Source_Containers
 {
     const EVENT_NAME = 'zkilleman_checkout_containers_additional';
-    
+
     /**
      * Get available checkout step layout containers
      *
-     * @return array 
+     * @return array
      */
     public function toOptionArray()
     {
@@ -47,6 +47,13 @@ class Zkilleman_Checkout_Model_Source_Containers
         ));
         Mage::dispatchEvent(
                     self::EVENT_NAME, array('containers' => $containers));
-        return (array) $containers->getData();
+        $options = array();
+        foreach ((array) $containers->getData() as $value => $label) {
+            $options[] = array(
+                'value' => $value,
+                'label' => $label
+            );
+        }
+        return $options;
     }
 }

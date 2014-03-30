@@ -31,7 +31,7 @@
 <config>
     <modules>
         <Zkilleman_Checkout>
-            <version>0.1.0.1</version>
+            <version>0.1.2.0</version>
         </Zkilleman_Checkout>
     </modules>
     <global>
@@ -80,6 +80,14 @@
                     </zkilleman_checkout_layout_render_before>
                 </observers>
             </controller_action_layout_render_before_checkout_onepage_index>
+            <controller_action_predispatch_checkout_onepage_index>
+                <observers>
+                    <zkilleman_checkout>
+                        <class>zkilleman_checkout/observer</class>
+                        <method>controllerActionPredispatch</method>
+                    </zkilleman_checkout>
+                </observers>
+            </controller_action_predispatch_checkout_onepage_index>
         </events>
     </frontend>
     <default>

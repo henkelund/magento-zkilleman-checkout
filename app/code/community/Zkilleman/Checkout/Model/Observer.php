@@ -74,15 +74,29 @@ class Zkilleman_Checkout_Model_Observer
             return;
         }
 
-        if ($this->_getConfig()->shouldEstimateShippingMethods()) {
-            $this->estimateShippingMethods();
-        }
-
         if (!$this->_getConfig()->shouldShowReviewBlock() &&
                 ($block = Mage::app()->getLayout()
                                             ->getBlock('checkout.onepage.review'))) {
             $block->unsetChild('info');
         }
+    }
+
+    /**
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Zkilleman_Checkout_Model_Observer
+     */
+    public function controllerActionPredispatch(Varien_Event_Observer $observer)
+    {
+        if (!$this->_isEnabled()) {
+            return $this;
+        }
+
+        if ($this->_getConfig()->shouldEstimateShippingMethods()) {
+            $this->estimateShippingMethods();
+        }
+
+        return $this;
     }
 
     /**

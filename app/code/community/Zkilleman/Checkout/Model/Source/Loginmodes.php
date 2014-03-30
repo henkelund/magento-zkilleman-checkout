@@ -33,15 +33,24 @@ class Zkilleman_Checkout_Model_Source_Loginmodes
     /**
      * Get available login (checkout method) display modes
      *
-     * @return array 
+     * @return array
      */
     public function toOptionArray()
     {
         $helper = Mage::helper('zkilleman_checkout');
         return array(
-            'show'     => $helper->__('Always show'),
-            'minimize' => $helper->__('Minimize when inactive'),
-            'hide'     => $helper->__('Always hide')
+            array(
+                'value' => 'show',
+                'label' => $helper->__('Always show')
+            ),
+            array(
+                'value' => 'minimize',
+                'label' => $helper->__('Minimize when inactive')
+            ),
+            array(
+                'value' => 'hide',
+                'label' => $helper->__('Always hide')
+            )
         );
     }
 }
